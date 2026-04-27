@@ -117,6 +117,7 @@ export type PaginatedProfilesResponse = {
 export type CurrentUserResponse = ApiSuccessResponse<User>;
 export type ListProfilesResponse = PaginatedProfilesResponse;
 export type SearchProfilesResponse = PaginatedProfilesResponse;
+export type GetProfileResponse = ApiSuccessResponse<Profile>;
 
 export type ProfileCreateRequest = {
   name: string;
