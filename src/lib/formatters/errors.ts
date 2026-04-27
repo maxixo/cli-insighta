@@ -1,6 +1,7 @@
+import { ApiClientError } from "../api-client.js";
 import { CallbackServerError } from "../callback-server.js";
 import { CredentialsStoreError } from "../credentials-store.js";
-import { ApiClientError } from "../api-client.js";
+import { TokenManagerError } from "../token-manager.js";
 
 export function formatError(error: unknown): string {
   if (error instanceof ApiClientError) {
@@ -12,6 +13,10 @@ export function formatError(error: unknown): string {
   }
 
   if (error instanceof CallbackServerError) {
+    return error.message;
+  }
+
+  if (error instanceof TokenManagerError) {
     return error.message;
   }
 
