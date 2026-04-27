@@ -25,7 +25,7 @@ type RunLogoutCommandInput = {
 
 export function createLogoutCommand(): Command {
   return new Command("logout")
-    .description("Log out of Insighta")
+    .description("Revoke the current Insighta session and remove local credentials")
     .action(async (_options, command) => {
       try {
         const globalOptions = command.optsWithGlobals() as {

@@ -25,7 +25,7 @@ type RunProfilesCreateCommandInput = ProfilesCreateCommandOptions & {
 
 export function createProfilesCreateCommand(): Command {
   return new Command("create")
-    .description("Create an Insighta profile")
+    .description("Create an Insighta profile from a name")
     .requiredOption("--name <name>", "Profile name")
     .action(async (options, command) => {
       try {

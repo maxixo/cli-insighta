@@ -1,7 +1,7 @@
 {
   "name": "cli-insighta",
   "version": "0.1.0",
-  "description": "Insighta standalone CLI",
+  "description": "CLI for Insighta authentication and profile workflows",
   "type": "module",
   "bin": {
     "insighta": "./dist/bin/insighta.js"
@@ -16,8 +16,10 @@
     "build": "tsc -p tsconfig.json",
     "clean": "rimraf dist",
     "dev": "tsx src/bin/insighta.ts",
-    "test": "vitest run --passWithNoTests",
-    "test:watch": "vitest --passWithNoTests",
+    "prepack": "npm run clean && npm run build",
+    "smoke:install": "node ./scripts/smoke-install.mjs",
+    "test": "vitest run --passWithNoTests --pool=threads",
+    "test:watch": "vitest --passWithNoTests --pool=threads",
     "typecheck": "tsc --noEmit -p tsconfig.json"
   },
   "dependencies": {

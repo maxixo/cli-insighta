@@ -35,7 +35,7 @@ type RunProfilesSearchCommandInput = ProfilesSearchCommandOptions & {
 export function createProfilesSearchCommand(): Command {
   return new Command("search")
     .argument("<query>", "Search query")
-    .description("Search Insighta profiles")
+    .description("Search Insighta profiles by query")
     .option("--gender <value>", "Filter by gender")
     .option("--country <code>", "Filter by country code")
     .option("--age-group <value>", "Filter by age group")
