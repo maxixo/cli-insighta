@@ -1,5 +1,6 @@
 export const CLI_NAME = "insighta";
-export const CLI_DESCRIPTION = "Insighta CLI";
+export const CLI_DESCRIPTION =
+  "Authenticate with Insighta and manage profiles from the terminal";
 export const CLI_VERSION = "0.1.0";
 
 export const DEFAULT_API_BASE_URL = "http://localhost:4000";

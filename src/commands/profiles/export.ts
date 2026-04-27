@@ -39,7 +39,7 @@ type RunProfilesExportCommandInput = ProfilesExportCommandOptions & {
 
 export function createProfilesExportCommand(): Command {
   return new Command("export")
-    .description("Export Insighta profiles")
+    .description("Export Insighta profiles as CSV")
     .requiredOption("--format <format>", "Export format (csv only)")
     .option("--gender <value>", "Filter by gender")
     .option("--country <code>", "Filter by country code")

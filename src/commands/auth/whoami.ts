@@ -22,7 +22,7 @@ type RunWhoAmICommandInput = {
 
 export function createWhoAmICommand(): Command {
   return new Command("whoami")
-    .description("Show the current authenticated Insighta user")
+    .description("Show the currently authenticated Insighta user")
     .action(async (_options, command) => {
       try {
         const globalOptions = command.optsWithGlobals() as {

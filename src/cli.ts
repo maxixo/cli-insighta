@@ -13,14 +13,27 @@ import { CLI_DESCRIPTION, CLI_NAME, CLI_VERSION } from "./lib/constants.js";
 export function buildProgram(): Command {
   const program = new Command();
   const profilesCommand = new Command("profiles")
-    .description("Manage Insighta profiles");
+    .description("List, inspect, search, create, and export Insighta profiles");
 
   program
     .name(CLI_NAME)
     .description(CLI_DESCRIPTION)
     .version(CLI_VERSION)
     .option("--base-url <url>", "Override the Insighta API base URL")
-    .showHelpAfterError();
+    .showHelpAfterError()
+    .showSuggestionAfterError()
+    .addHelpText(
+      "afterAll",
+      [
+        "",
+        "Examples:",
+        "  insighta login",
+        "  insighta whoami --base-url https://api.insighta.example",
+        "  insighta profiles list --country NG --page 2",
+        "  insighta profiles search \"Ada\" --gender female",
+        "  insighta profiles export --format csv --country NG",
+      ].join("\n"),
+    );
 
   profilesCommand
     .addCommand(createProfilesListCommand())
