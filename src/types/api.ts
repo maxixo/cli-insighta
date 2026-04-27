@@ -30,6 +30,13 @@ export type AuthStartData = {
 
 export type AuthStartResponse = ApiSuccessResponse<AuthStartData>;
 
+export type AuthStartRequest = {
+  state: string;
+  redirect_uri: string;
+  code_challenge: string;
+  code_challenge_method?: "S256";
+};
+
 export type AuthSession = {
   access_token: string;
   refresh_token: string;
