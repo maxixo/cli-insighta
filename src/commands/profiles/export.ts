@@ -6,36 +6,24 @@ import { readEnvBaseUrl, resolveConfig } from "../../lib/config.js";
 import { readCredentials } from "../../lib/credentials-store.js";
 import { saveCsvExport } from "../../lib/csv.js";
 import { formatError } from "../../lib/formatters/errors.js";
+import {
+  buildProfileListParams,
+  type NormalizedProfileFilterOptions,
+  type RawProfileFilterOptions,
+  validateAndNormalizeProfileFilters,
+} from "../../lib/profile-filters.js";
 import { createTokenManager } from "../../lib/token-manager.js";
-import type { ProfileListParams, ProfileSortField, SortOrder } from "../../types/api.js";
+import type { ProfileListParams } from "../../types/api.js";
 
 type OutputWriter = Pick<NodeJS.WriteStream, "write">;
 
 type ProfilesExportCommandOptions = {
   format: "csv";
-  gender?: string;
-  country?: string;
-  ageGroup?: string;
-  minAge?: number;
-  maxAge?: number;
-  sortBy?: ProfileSortField;
-  order?: SortOrder;
-  page?: number;
-  limit?: number;
-};
+} & NormalizedProfileFilterOptions;
 
 type RawProfilesExportCommandOptions = {
   format?: string;
-  gender?: string;
-  country?: string;
-  ageGroup?: string;
-  minAge?: string;
-  maxAge?: string;
-  sortBy?: ProfileSortField;
-  order?: SortOrder;
-  page?: string;
-  limit?: string;
-};
+} & RawProfileFilterOptions;
 
 type RunProfilesExportCommandInput = ProfilesExportCommandOptions & {
   baseUrl?: string;
@@ -134,17 +122,7 @@ export async function runProfilesExportCommand(
 export function buildProfilesExportParams(
   options: Omit<ProfilesExportCommandOptions, "format">,
 ): ProfileListParams {
-  return {
-    gender: options.gender,
-    country_id: options.country,
-    age_group: options.ageGroup,
-    min_age: options.minAge,
-    max_age: options.maxAge,
-    sort_by: options.sortBy,
-    order: options.order,
-    page: options.page,
-    limit: options.limit,
-  };
+  return buildProfileListParams(options);
 }
 
 function renderExportSuccess(
@@ -161,15 +139,7 @@ function normalizeProfilesExportCommandOptions(
 ): ProfilesExportCommandOptions {
   return {
     format: parseCsvFormat(options.format),
-    gender: options.gender,
-    country: options.country,
-    ageGroup: options.ageGroup,
-    minAge: parseIntegerOption("min-age", options.minAge),
-    maxAge: parseIntegerOption("max-age", options.maxAge),
-    sortBy: options.sortBy,
-    order: options.order,
-    page: parseIntegerOption("page", options.page),
-    limit: parseIntegerOption("limit", options.limit),
+    ...validateAndNormalizeProfileFilters(options),
   };
 }
 
@@ -181,19 +151,4 @@ function parseCsvFormat(value: string | undefined): "csv" {
   }
 
   return "csv";
-}
-
-function parseIntegerOption(
-  optionName: string,
-  value: string | undefined,
-): number | undefined {
-  if (value === undefined) {
-    return undefined;
-  }
-
-  if (!/^-?\d+$/.test(value)) {
-    throw new Error(`Invalid value for --${optionName}: expected an integer.`);
-  }
-
-  return Number.parseInt(value, 10);
 }

@@ -9,27 +9,18 @@ import {
   renderPaginationSummary,
   renderProfilesTable,
 } from "../../lib/formatters/profile.js";
+import {
+  buildProfileListParams,
+  type NormalizedProfileFilterOptions,
+  type RawProfileFilterOptions,
+  validateAndNormalizeProfileFilters,
+} from "../../lib/profile-filters.js";
 import { createTokenManager } from "../../lib/token-manager.js";
-import type {
-  ProfileListParams,
-  ProfileSortField,
-  SearchProfilesResponse,
-  SortOrder,
-} from "../../types/api.js";
+import type { ProfileListParams, SearchProfilesResponse } from "../../types/api.js";
 
 type OutputWriter = Pick<NodeJS.WriteStream, "write">;
 
-type ProfilesSearchCommandOptions = {
-  gender?: string;
-  country?: string;
-  ageGroup?: string;
-  minAge?: number;
-  maxAge?: number;
-  sortBy?: ProfileSortField;
-  order?: SortOrder;
-  page?: number;
-  limit?: number;
-};
+type ProfilesSearchCommandOptions = NormalizedProfileFilterOptions;
 
 type RunProfilesSearchCommandInput = ProfilesSearchCommandOptions & {
   query: string;
@@ -48,23 +39,15 @@ export function createProfilesSearchCommand(): Command {
     .option("--gender <value>", "Filter by gender")
     .option("--country <code>", "Filter by country code")
     .option("--age-group <value>", "Filter by age group")
-    .option(
-      "--min-age <number>",
-      "Filter by minimum age",
-      parseIntegerOption("min-age"),
-    )
-    .option(
-      "--max-age <number>",
-      "Filter by maximum age",
-      parseIntegerOption("max-age"),
-    )
+    .option("--min-age <number>", "Filter by minimum age")
+    .option("--max-age <number>", "Filter by maximum age")
     .option(
       "--sort-by <field>",
       "Sort by age, created_at, or gender_probability",
     )
     .option("--order <direction>", "Sort order: asc or desc")
-    .option("--page <number>", "Page number", parseIntegerOption("page"))
-    .option("--limit <number>", "Page size", parseIntegerOption("limit"))
+    .option("--page <number>", "Page number")
+    .option("--limit <number>", "Page size")
     .action(async (query, options, command) => {
       try {
         const globalOptions = command.optsWithGlobals() as {
@@ -73,7 +56,9 @@ export function createProfilesSearchCommand(): Command {
 
         await runProfilesSearchCommand({
           query,
-          ...(options as ProfilesSearchCommandOptions),
+          ...validateAndNormalizeProfileFilters(
+            options as RawProfileFilterOptions,
+          ),
           baseUrl: globalOptions.baseUrl,
         });
       } catch (error) {
@@ -131,17 +116,7 @@ export async function runProfilesSearchCommand(
 export function buildProfilesSearchParams(
   options: ProfilesSearchCommandOptions,
 ): ProfileListParams {
-  return {
-    gender: options.gender,
-    country_id: options.country,
-    age_group: options.ageGroup,
-    min_age: options.minAge,
-    max_age: options.maxAge,
-    sort_by: options.sortBy,
-    order: options.order,
-    page: options.page,
-    limit: options.limit,
-  };
+  return buildProfileListParams(options);
 }
 
 function renderProfilesSearchResult(
@@ -151,18 +126,4 @@ function renderProfilesSearchResult(
   stdout.write(
     `${renderProfilesTable(response.data)}\n\n${renderPaginationSummary(response)}\n`,
   );
-}
-
-function parseIntegerOption(
-  optionName: string,
-): (value: string) => number {
-  return (value: string) => {
-    if (!/^-?\d+$/.test(value)) {
-      throw new Error(
-        `Invalid value for --${optionName}: expected an integer.`,
-      );
-    }
-
-    return Number.parseInt(value, 10);
-  };
 }
