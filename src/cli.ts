@@ -1,13 +1,13 @@
 import { Command } from "commander";
 
-const CLI_VERSION = "0.1.0";
+import { CLI_DESCRIPTION, CLI_NAME, CLI_VERSION } from "./lib/constants.js";
 
 export function buildProgram(): Command {
   const program = new Command();
 
   program
-    .name("insighta")
-    .description("Insighta CLI")
+    .name(CLI_NAME)
+    .description(CLI_DESCRIPTION)
     .version(CLI_VERSION)
     .showHelpAfterError();
 
