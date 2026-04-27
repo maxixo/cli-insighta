@@ -1,10 +1,10 @@
 import { Command } from "commander";
-import Table from "cli-table3";
 import ora from "ora";
 
 import { createApiClient, type ApiClient } from "../../lib/api-client.js";
 import { readEnvBaseUrl, resolveConfig } from "../../lib/config.js";
 import { formatError } from "../../lib/formatters/errors.js";
+import { renderKeyValueTable } from "../../lib/formatters/table.js";
 import { readCredentials } from "../../lib/credentials-store.js";
 import { createTokenManager } from "../../lib/token-manager.js";
 import type { User } from "../../types/api.js";
@@ -83,31 +83,23 @@ function renderUserTable(
   stdout: OutputWriter,
   user: User,
 ): void {
-  const table = new Table({
-    head: ["Field", "Value"],
-    style: {
-      head: [],
-    },
-    wordWrap: true,
-  });
-
-  table.push(["ID", user.id]);
+  const rows: Array<[string, string]> = [["ID", user.id]];
 
   if (user.github_id) {
-    table.push(["GitHub ID", user.github_id]);
+    rows.push(["GitHub ID", user.github_id]);
   }
 
   if (user.username) {
-    table.push(["Username", user.username]);
+    rows.push(["Username", user.username]);
   }
 
   if (user.name) {
-    table.push(["Name", user.name]);
+    rows.push(["Name", user.name]);
   }
 
   if (user.email) {
-    table.push(["Email", user.email]);
+    rows.push(["Email", user.email]);
   }
 
-  stdout.write(`${table.toString()}\n`);
+  stdout.write(`${renderKeyValueTable(rows)}\n`);
 }
