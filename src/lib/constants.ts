@@ -13,7 +13,6 @@ export const PKCE_CODE_VERIFIER_BYTE_LENGTH = 64;
 export const API_REQUEST_TIMEOUT_MS = 15 * 1000;
 export const API_EXPORT_TIMEOUT_MS = 60 * 1000;
 export const API_AUTH_TIMEOUT_MS = 15 * 1000;
-export const ACCESS_TOKEN_REFRESH_BUFFER_MS = 60 * 1000;
 
 const AUTH_BASE_PATH = "/api/auth";
 const PROFILES_BASE_PATH = "/api/profiles";
